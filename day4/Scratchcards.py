@@ -12,9 +12,34 @@ def sumAllPoints(cards):
         total += cTotal
     return total
 
+def sumAllCards(cards):
+    cards.reverse()
+
+    cardRes = {}
+
+    for card in cards:
+        totalCardsFromCard = 1
+        winners, actual = card.split('|')
+        winners = winners.split()
+        cardNbr = int(winners[1][0:-1])
+        winners = set(winners[2:])
+        actual = actual.split()
+        wins = 0
+        for num in actual:
+            if num in winners:
+                wins += 1
+        
+        for i in range(wins):
+            totalCardsFromCard += cardRes.get(cardNbr + i + 1, 0)
+        cardRes[cardNbr] = totalCardsFromCard
+    return sum(cardRes.values())
+
+
+
 
 if __name__ == '__main__':
     with open('day4/input.txt') as f:
         cards = [val.strip() for val in f]
 
-    print('Total points: ' + str(sumAllPoints(cards)))
+    # print('Total points: ' + str(sumAllPoints(cards)))
+    print('Total nbr of cards: ' + str(sumAllCards(cards)))
