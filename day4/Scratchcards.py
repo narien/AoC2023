@@ -41,5 +41,5 @@ if __name__ == '__main__':
     with open('day4/input.txt') as f:
         cards = [val.strip() for val in f]
 
-    # print('Total points: ' + str(sumAllPoints(cards)))
+    print('Total points: ' + str(sumAllPoints(cards)))
     print('Total nbr of cards: ' + str(sumAllCards(cards)))
