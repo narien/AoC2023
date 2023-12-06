@@ -65,21 +65,22 @@ def updateSpans(spans, lineNbr, lines):
     while lineNbr < len(lines) and lines[lineNbr] != '':
         unusedSpans = []
         nextStart, oldStart, chunk = [int(val) for val in lines[lineNbr].split()]
+        oldStop = oldStart + chunk - 1
         offset = nextStart - oldStart
         while (len(spans)):
             span = spans.pop(0)
-            if oldStart <= min(span) and oldStart + chunk >= max(span):
+            if oldStart <= min(span) and oldStop >= max(span): # whole span
                 newSpans.append((min(span) + offset, max(span) + offset))
-            elif oldStart <= min(span) and oldStart + chunk > min(span) and oldStart + chunk < max(span):
-                newSpans.append((min(span) + offset, oldStart + chunk - 1 + offset))
-                unusedSpans.append((oldStart + chunk, max(span)))
-            elif oldStart > min(span) and oldStart < max(span) and oldStart + chunk > max(span):
+            elif oldStart <= min(span) and oldStop > min(span) and oldStop < max(span): # beginning of span
+                newSpans.append((min(span) + offset, oldStop + offset))
+                unusedSpans.append((oldStop + 1, max(span)))
+            elif oldStart > min(span) and oldStart < max(span) and oldStop > max(span): # end of span
                 newSpans.append((oldStart + offset, max(span) + offset))
-                unusedSpans.append((min(span), oldStart + chunk - 1))
-            elif oldStart > min(span) and oldStart + chunk < max(span):
-                newSpans.append((oldStart + offset, oldStart + chunk + offset))
-                unusedSpans.append((min(span), oldStart))
-                unusedSpans.append((oldStart + chunk - 1, max(span)))
+                unusedSpans.append((min(span), oldStart - 1))
+            elif oldStart > min(span) and oldStop < max(span): # middle of span
+                newSpans.append((oldStart + offset, oldStop + offset))
+                unusedSpans.append((min(span), oldStart - 1))
+                unusedSpans.append((oldStop + 1, max(span)))
             else:
                 unusedSpans.append(span)
         spans = unusedSpans
