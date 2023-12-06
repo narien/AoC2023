@@ -69,19 +69,19 @@ def updateSpans(spans, lineNbr, lines):
         offset = nextStart - oldStart
         while (len(spans)):
             span = spans.pop(0)
-            if oldStart <= min(span) and oldStop >= max(span):                          # whole span
+            if oldStart <= min(span) and oldStop >= max(span):                              # whole span
                 newSpans.append((min(span) + offset, max(span) + offset))
-            elif oldStart <= min(span) and oldStop > min(span) and oldStop < max(span): # beginning of span
+            elif oldStart <= min(span) and oldStop >= min(span) and oldStop <= max(span):   # beginning of span
                 newSpans.append((min(span) + offset, oldStop + offset))
                 unusedSpans.append((oldStop + 1, max(span)))
-            elif oldStart > min(span) and oldStart < max(span) and oldStop > max(span): # end of span
+            elif oldStart >= min(span) and oldStart <= max(span) and oldStop >= max(span):  # end of span
                 newSpans.append((oldStart + offset, max(span) + offset))
                 unusedSpans.append((min(span), oldStart - 1))
-            elif oldStart > min(span) and oldStop < max(span):                          # middle of span
+            elif oldStart >= min(span) and oldStop <= max(span):                            # middle of span
                 newSpans.append((oldStart + offset, oldStop + offset))
                 unusedSpans.append((min(span), oldStart - 1))
                 unusedSpans.append((oldStop + 1, max(span)))
-            else:                                                                       #  no match    
+            else:                                                                           #  no match    
                 unusedSpans.append(span)
         spans = unusedSpans
         lineNbr += 1
