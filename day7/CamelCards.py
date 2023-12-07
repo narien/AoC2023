@@ -99,7 +99,6 @@ if __name__ == '__main__':
     for i in range(len(lines)):
         totalWinningsP1 += int(sortedP1[i].split()[1]) * (i+1)
     print('Total winnings part one: ' + str(totalWinningsP1))
-    print(sortedP1)
 
     sortedP2 = sorted(lines, key=functools.cmp_to_key(compareP2))
     totalWinningsP2 = 0
