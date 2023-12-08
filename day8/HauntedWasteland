@@ -1,3 +1,5 @@
+from math import lcm
+
 def buildLookupMap(lines):
     map = {}
     for line in lines:
@@ -19,6 +21,24 @@ def countStepsToZZZ(currPos, instructions, map):
             return count
     return countStepsToZZZ(currPos, instructions, map) + count
 
+def countStepsToZ(currPos, instructions, map):
+    count = 0
+    while True:
+        for c in instructions:
+            if c == 'L':
+                currPos = map[currPos][0]
+            else:
+                currPos = map[currPos][1]
+            count += 1
+            if currPos[2:] == 'Z':
+                return count
+
+def getAllStartingNodes(nodes):
+    startingNodes = []
+    for node in nodes:
+        if node[2] == 'A':
+            startingNodes.append(node)
+    return startingNodes
 
 if __name__ == '__main__':
     with open('day8/input.txt') as f:
@@ -27,3 +47,10 @@ if __name__ == '__main__':
     lines= lines[2:]
     map = buildLookupMap(lines)
     print('Steps from AAA to ZZZ are: ' + str(countStepsToZZZ('AAA', instructions, map)))
+
+    nodes = getAllStartingNodes(map.keys())
+    counts = []
+    for node in nodes:
+        counts.append(countStepsToZ(node, instructions, map))
+
+    print('LCM is: ' + str(lcm(*counts)))
