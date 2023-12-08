@@ -9,19 +9,7 @@ def buildLookupMap(lines):
         map[source] = (left, right)
     return map
 
-def countStepsToZZZ(currPos, instructions, map):
-    count = 0
-    for c in instructions:
-        if c == 'L':
-            currPos = map[currPos][0]
-        else:
-            currPos = map[currPos][1]
-        count += 1
-        if currPos == 'ZZZ':
-            return count
-    return countStepsToZZZ(currPos, instructions, map) + count
-
-def countStepsToZ(currPos, instructions, map):
+def countStepsToZ(currPos, instructions, map, winCondition):
     count = 0
     while True:
         for c in instructions:
@@ -30,7 +18,7 @@ def countStepsToZ(currPos, instructions, map):
             else:
                 currPos = map[currPos][1]
             count += 1
-            if currPos[2:] == 'Z':
+            if winCondition(currPos):
                 return count
 
 def getAllStartingNodes(nodes):
@@ -46,11 +34,11 @@ if __name__ == '__main__':
     instructions = lines[0]
     lines= lines[2:]
     map = buildLookupMap(lines)
-    print('Steps from AAA to ZZZ are: ' + str(countStepsToZZZ('AAA', instructions, map)))
+    print('Steps from AAA to ZZZ are: ' + str(countStepsToZ('AAA', instructions, map, lambda s : s == 'ZZZ')))
 
     nodes = getAllStartingNodes(map.keys())
     counts = []
     for node in nodes:
-        counts.append(countStepsToZ(node, instructions, map))
+        counts.append(countStepsToZ(node, instructions, map, lambda s : s[2] == 'Z'))
 
     print('LCM is: ' + str(lcm(*counts)))
