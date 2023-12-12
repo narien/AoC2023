@@ -36,17 +36,47 @@ def nextPos(y, x, cameFrom, map):
 
 def findLoopLength(y, x, cameFrom, map):
     stepsTaken = 1 # start one step from S
+    fullPath = set()
+    fullPath.add((y,x))
     while True:
         y, x, cameFrom = nextPos(y, x, cameFrom, map)
+        fullPath.add((y,x))
         stepsTaken += 1
         if map[y][x] == 'S': 
             break
-    return stepsTaken
+    return stepsTaken, fullPath
 
+def countEnclosedTiles(fullPath, map):
+    enclosedTiles = 0
+    for y in range(len(map)):
+        enclosed = False
+        prevCurve = ''
+        for x in range(len(map[y])):
+            currChar = map[y][x]
+            if (y, x) in fullPath:
+                if currChar in 'LF':
+                    prevCurve = currChar
+                elif currChar == '7' and prevCurve == 'F':
+                    prevCurve = ''
+                elif currChar == 'J' and prevCurve == 'L':
+                    prevCurve = ''
+                elif currChar == '7' and prevCurve == 'L':
+                    enclosed = True if not enclosed else False
+                    prevCurve = ''
+                elif currChar == 'J' and prevCurve == 'F':
+                    enclosed = True if not enclosed else False
+                    prevCurve = ''
+                elif currChar == '|':
+                    enclosed = True if not enclosed else False
+            elif enclosed:
+                enclosedTiles += 1
+    return enclosedTiles
 
 if __name__ == '__main__':
     with open('day10/input.txt') as f:
         map = [line.strip() for line in f]
     aY, aX = findAnimalPos(map)
     y, x, cameFrom = findLoopStart(aY, aX, map)
-    print('Furthest part from start is: ' + str(int(findLoopLength(y, x, cameFrom, map) / 2)))
+    stepsTaken, fullPath = findLoopLength(y, x, cameFrom, map)
+    print('Furthest part from start is: ' + str(int(stepsTaken / 2)))
+    print('Nbr of enclosed Tiles: ' + str(countEnclosedTiles(fullPath, map)))
